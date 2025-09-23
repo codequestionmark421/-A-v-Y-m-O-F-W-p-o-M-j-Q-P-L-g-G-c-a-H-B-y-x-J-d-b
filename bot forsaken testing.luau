@@ -15,6 +15,8 @@ local execR = 6
 local delay = 0.2
 local running = true
 local respawnPos = Vector3.new(-12, 10, -483)
+iswandering = true;
+messages = {"can someone fight me please 🥺"}
 
 -- Get character
 local function getChar()
@@ -85,17 +87,31 @@ local function exec(p)
     end
 end
 
+--chat loop
+task.spawn(function()
+    if iswandering then
+        task.wait(math.random(1, 5))
+        if not iswandering then return end
+        
+        plr = Players.LocalPlayer
+        plr:Chat(messages[math.random(1, #messages)])
+    end
+end)
+
 -- Main loop
 task.spawn(function()
     while running do
         local target, dist = nearest(detectR)
         if target then
+            iswandering = false;
             hum.WalkSpeed = chaseSpeed
             hum:MoveTo(target.Character.HumanoidRootPart.Position)
             if dist <= execR then
                 exec(target)
             end
         else
+            --wandering
+            iswandering = true;
             hum.WalkSpeed = normalSpeed
             hum:MoveTo(rndPos())
         end
