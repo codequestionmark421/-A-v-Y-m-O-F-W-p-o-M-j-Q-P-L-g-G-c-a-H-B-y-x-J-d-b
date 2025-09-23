@@ -89,12 +89,13 @@ end
 
 --chat loop
 task.spawn(function()
-    if iswandering then
+    while true do        
         task.wait(math.random(1, 5))
-        if not iswandering then return end
+        if iswandering then
         
-        plr = Players.LocalPlayer
-        plr:Chat(messages[math.random(1, #messages)])
+            plr = Players.LocalPlayer
+            plr:Chat(messages[math.random(1, #messages)])
+        end
     end
 end)
 
