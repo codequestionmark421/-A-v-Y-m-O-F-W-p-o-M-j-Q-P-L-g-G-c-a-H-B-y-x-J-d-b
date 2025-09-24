@@ -91,8 +91,6 @@ end
 task.spawn(function()
     local TextChatService = game:GetService("TextChatService")
     local textChannel = TextChatService.TextChannels.RBXGeneral
-    
-    textChannel:SendAsync(messages[math.random(1, #messages)])
 
     while running do        
         task.wait(math.random(1, 45))
