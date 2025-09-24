@@ -16,7 +16,7 @@ local delay = 0.2
 local running = true
 local respawnPos = Vector3.new(-12, 10, -483)
 iswandering = true;
-messages = {"can someone fight me please 🥺"}
+messages = {"can someone fight me please 🥺", "anybody wanna go to pvp 😏", "i just want to fight someone 🥺"}
 
 -- Get character
 local function getChar()
@@ -91,8 +91,11 @@ end
 task.spawn(function()
     local TextChatService = game:GetService("TextChatService")
     local textChannel = TextChatService.TextChannels.RBXGeneral
+    
+    textChannel:SendAsync(messages[math.random(1, #messages)])
+
     while true do        
-        task.wait(math.random(1, 5))
+        task.wait(math.random(1, 45))
         if iswandering then
             textChannel:SendAsync(messages[math.random(1, #messages)])
         end
