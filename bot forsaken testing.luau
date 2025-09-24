@@ -89,10 +89,12 @@ end
 
 --chat loop
 task.spawn(function()
+    local TextChatService = game:GetService("TextChatService")
+    local textChannel = TextChatService.TextChannels.RBXGeneral
     while true do        
         task.wait(math.random(1, 5))
         if iswandering then
-            plr:Chat(messages[math.random(1, #messages)])
+            textChannel:SendAsync(messages[math.random(1, #messages)])
         end
     end
 end)
