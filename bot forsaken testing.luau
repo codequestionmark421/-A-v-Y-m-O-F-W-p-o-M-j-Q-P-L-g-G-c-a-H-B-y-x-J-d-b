@@ -94,7 +94,7 @@ task.spawn(function()
     
     textChannel:SendAsync(messages[math.random(1, #messages)])
 
-    while true do        
+    while running do        
         task.wait(math.random(1, 45))
         if iswandering then
             textChannel:SendAsync(messages[math.random(1, #messages)])
