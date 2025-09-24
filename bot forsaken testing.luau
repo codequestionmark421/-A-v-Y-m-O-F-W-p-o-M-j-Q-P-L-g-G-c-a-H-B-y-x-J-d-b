@@ -93,7 +93,7 @@ task.spawn(function()
     local textChannel = TextChatService.TextChannels.RBXGeneral
 
     while running do        
-        task.wait(math.random(1, 45))
+        task.wait(math.random(10, 45))
         if iswandering then
             textChannel:SendAsync(messages[math.random(1, #messages)])
         end
