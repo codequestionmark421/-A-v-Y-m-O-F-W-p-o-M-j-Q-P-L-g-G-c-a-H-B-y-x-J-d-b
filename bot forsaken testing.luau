@@ -101,22 +101,50 @@ task.spawn(function()
 end)
 
 -- Main loop
+-- Taunt messages
+local tauntMessages = {"get back here", "coward", "you can't run forever", "stop running"}
+
+-- Table to track chase start times per target
+local chaseStartTime = nil
+local currentTarget = nil
+
+-- Main loop (inside your existing while running loop)
 task.spawn(function()
     while running do
         local target, dist = nearest(detectR)
+        
         if target then
-            iswandering = false;
+            -- Start chasing
+            if currentTarget ~= target then
+                currentTarget = target
+                chaseStartTime = tick() -- record when chase started
+            end
+
+            iswandering = false
             hum.WalkSpeed = chaseSpeed
             hum:MoveTo(target.Character.HumanoidRootPart.Position)
+
+            -- Taunt if chasing for over 10 seconds
+            if chaseStartTime and tick() - chaseStartTime >= 10 then
+                textChannel:SendAsync(tauntMessages[math.random(1, #tauntMessages)])
+                chaseStartTime = tick() -- reset timer to avoid spamming
+            end
+
             if dist <= execR then
                 exec(target)
+                currentTarget = nil
+                chaseStartTime = nil
             end
         else
-            --wandering
-            iswandering = true;
+            -- Wandering
+            currentTarget = nil
+            chaseStartTime = nil
+            iswandering = true
             hum.WalkSpeed = normalSpeed
             hum:MoveTo(rndPos())
         end
+
         task.wait(delay)
     end
 end)
+
