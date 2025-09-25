@@ -108,6 +108,9 @@ local tauntMessages = {"get back here", "coward", "you can't run forever", "stop
 local chaseStartTime = nil
 local currentTarget = nil
 
+local TextChatService = game:GetService("TextChatService")
+local textChannel = TextChatService.TextChannels.RBXGeneral
+
 -- Main loop (inside your existing while running loop)
 task.spawn(function()
     while running do
