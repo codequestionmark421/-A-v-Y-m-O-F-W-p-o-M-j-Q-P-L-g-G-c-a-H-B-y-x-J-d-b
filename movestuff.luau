@@ -1,178 +1,347 @@
--- Dev_MoveSelector.lua  (LocalScript; StarterPlayerScripts)
-local RunService = game:GetService("RunService")
+-- Dev_MoveSelector.lua
+-- Run as a LocalScript inside StarterPlayerScripts for in-Studio testing
+
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local localPlayer = Players.LocalPlayer
 
--- Only allow in Studio or for these admin userids (safety)
-local ADMIN_USERIDS = {
-    [localPlayer.UserId] = true, -- you
-    --[12345678] = true, -- add other dev ids if needed
-}
-
-local function isAllowed()
-	return true;
-end
-
-if not isAllowed() then
-    StarterGui:SetCore("SendNotification", {
-        Title = "Dev Move Selector",
-        Text = "Not allowed (not Studio or not admin).",
-        Duration = 5
-    })
-    return
-end
-
--- === Paste your args table here (exactly as provided) ===
+-- your full move dataset
 local args = {
 	{
-		Image = "rbxassetid://139498278529145",
-		Name = "Charge",
-		Uses = -1,
-		Cooldown = 40,
+		Image = "rbxassetid://6684648436",
+		Name = "Max Capacity",
+		Uses = 2,
+		Cooldown = 55,
 		Key = Enum.KeyCode.E
 	},
 	0,
 	{
 		Shedletsky = {
-			{ Image = "rbxassetid://534533607", Name = "Slash", Uses = -1, Cooldown = 40, Key = Enum.KeyCode.Q },
-			{ Image = "rbxassetid://3510346051", Name = "Fried Chicken", Uses = 2, Cooldown = 70, Key = Enum.KeyCode.E }
+			{
+				Image = "rbxassetid://534533607",
+				Name = "Slash",
+				Uses = -1,
+				Cooldown = 40,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://3510346051",
+				Name = "Fried Chicken",
+				Uses = 2,
+				Cooldown = 70,
+				Key = Enum.KeyCode.E
+			}
 		},
 		JohnDoe = {
-			{ Image = "rbxassetid://28827194", Name = "M1 JohnDoe", Uses = -1, Cooldown = 2, Key = Enum.KeyCode.Q }
+			{
+				Image = "rbxassetid://28827194",
+				Name = "M1 JohnDoe",
+				Uses = -1,
+				Cooldown = 2,
+				Key = Enum.KeyCode.Q
+			}
 		},
-        -- ... (snipped here for brevity in this message; keep your full mapping in the script)
+		Noli = {
+			{
+				Image = "rbxassetid://28827194",
+				Name = "M1 Noli",
+				Uses = -1,
+				Cooldown = 1.8,
+				Key = Enum.KeyCode.Q
+			}
+		},
+		["007n7"] = {
+			{
+				Image = "rbxassetid://131167660731272",
+				Name = "Clone",
+				Uses = -1,
+				Cooldown = 20,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://113186932840079",
+				Name = "c00lgui",
+				Uses = -1,
+				Cooldown = 70,
+				Key = Enum.KeyCode.E
+			},
+			{
+				Image = "rbxassetid://6187009322",
+				Name = "Inject",
+				Uses = -1,
+				Cooldown = 0.1,
+				Key = Enum.KeyCode.R
+			}
+		},
+		TwoTime = {
+			{
+				Image = "rbxassetid://4811127868",
+				Name = "Dagger",
+				Uses = -1,
+				Cooldown = 20,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://395945174",
+				Name = "Crouch",
+				Uses = -1,
+				Cooldown = 40,
+				Key = Enum.KeyCode.E
+			},
+			{
+				Image = "rbxassetid://7344398363",
+				Name = "Ritual",
+				Uses = 1,
+				Cooldown = 1,
+				Key = Enum.KeyCode.R
+			}
+		},
+		Jason = {
+			{
+				Image = "rbxassetid://28827194",
+				Name = "M1 Jason",
+				Uses = -1,
+				Cooldown = 2,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://12163554546",
+				Name = "Behead",
+				Uses = -1,
+				Cooldown = 15,
+				Key = Enum.KeyCode.E
+			},
+			{
+				Image = "rbxassetid://122749802408265",
+				Name = "Gashing Wound",
+				Uses = -1,
+				Cooldown = 30,
+				Key = Enum.KeyCode.R
+			}
+		},
+		Guest1337 = {
+			{
+				Image = "rbxassetid://748228341",
+				Name = "Block",
+				Uses = -1,
+				Cooldown = 20,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://139498278529145",
+				Name = "Charge",
+				Uses = -1,
+				Cooldown = 40,
+				Key = Enum.KeyCode.E
+			},
+			{
+				Image = "rbxassetid://97903626702461",
+				Name = "Punch",
+				Uses = 0,
+				Cooldown = 5,
+				Key = Enum.KeyCode.R
+			}
+		},
+		Elliot = {
+			{
+				Image = "rbxassetid://480037119",
+				Name = "Pizza",
+				Uses = -1,
+				Cooldown = 30,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://102304717227391",
+				Name = "Rush Hour",
+				Uses = 1,
+				Cooldown = 50,
+				Key = Enum.KeyCode.E
+			}
+		},
+		Noob = {
+			{
+				Image = "rbxassetid://534533607",
+				Name = "BloxyCola",
+				Uses = -1,
+				Cooldown = 40,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://6684648436",
+				Name = "SlateSkin",
+				Uses = -1,
+				Cooldown = 50,
+				Key = Enum.KeyCode.E
+			},
+			{
+				Image = "rbxassetid://6684648436",
+				Name = "GhostBurger",
+				Uses = -1,
+				Cooldown = 60,
+				Key = Enum.KeyCode.R
+			}
+		},
+		["1x1x1x1"] = {
+			{
+				Image = "rbxassetid://28827194",
+				Name = "M1 1x1x1x1",
+				Uses = -1,
+				Cooldown = 2,
+				Key = Enum.KeyCode.Q
+			}
+		},
+		["Roblox Character"] = {
+			{
+				Image = "rbxassetid://534533607",
+				Name = "Slash",
+				Uses = 4,
+				Cooldown = 60,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://6684648436",
+				Name = "Max Capacity",
+				Uses = 2,
+				Cooldown = 55,
+				Key = Enum.KeyCode.E
+			}
+		},
+		Chance = {
+			{
+				Image = "rbxassetid://16443147436",
+				Name = "Coin",
+				Uses = -1,
+				Cooldown = 1,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://18818938205",
+				Name = "Shoot",
+				Uses = 0,
+				Cooldown = 55,
+				Key = Enum.KeyCode.E
+			},
+			{
+				Image = "rbxassetid://18818938205",
+				Name = "Reroll",
+				Uses = 0,
+				Cooldown = 30,
+				Key = Enum.KeyCode.R
+			},
+			{
+				Image = "rbxassetid://18818938205",
+				Name = "HatFix",
+				Uses = 0,
+				Cooldown = 90,
+				Key = Enum.KeyCode.T
+			}
+		},
+		Builderman = {
+			{
+				Image = "rbxassetid://534533607",
+				Name = "Sentry",
+				Uses = -1,
+				Cooldown = 40,
+				Key = Enum.KeyCode.Q
+			},
+			{
+				Image = "rbxassetid://3510346051",
+				Name = "Dispenser",
+				Uses = -1,
+				Cooldown = 60,
+				Key = Enum.KeyCode.E
+			}
+		},
+		c00lkidd = {
+			{
+				Image = "rbxassetid://28827194",
+				Name = "M1 c00lkidd",
+				Uses = -1,
+				Cooldown = 2,
+				Key = Enum.KeyCode.Q
+			}
+		}
 	}
 }
--- ======================================================
 
--- For convenience, re-add the full mapping (ensure the full object you earlier pasted is present).
--- If you cut the mapping above for brevity, put the full object there.
 
--- flatten the moves into a list of {displayName, moveTable, owner}
-local moves = {} -- array of { Name = ..., Data = <moveTable>, Owner = <string or nil> }
-
--- first element (args[1]) if it looks like a single move record
-if type(args[1]) == "table" and args[1].Name then
-    table.insert(moves, { Name = args[1].Name, Data = args[1], Owner = nil })
-end
-
--- args[3] is a mapping owner -> list
+-- flatten all moves
+local moves = {}
 local map = args[3]
-if type(map) == "table" then
-    for owner, list in pairs(map) do
-        if type(list) == "table" then
-            for _, move in ipairs(list) do
-                if type(move) == "table" and move.Name then
-                    table.insert(moves, { Name = (owner .. " — " .. tostring(move.Name)), Data = move, Owner = owner })
-                end
-            end
-        end
+for owner, list in pairs(map) do
+    for _, move in ipairs(list) do
+        table.insert(moves, { Name = string.format("%s — %s", owner, move.Name), Data = move })
     end
 end
 
--- fallback: if no moves found, notify and abort
-if #moves == 0 then
-    StarterGui:SetCore("SendNotification", {
-        Title = "Dev Move Selector",
-        Text = "No moves parsed from args. Check args table.",
-        Duration = 6
-    })
-    return
-end
-
--- Try to load Rayfield quickly (dev convenience)
-local ok, Rayfield = pcall(function()
-    return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-end)
-if not ok or not Rayfield then
-    StarterGui:SetCore("SendNotification", {
-        Title = "Dev Move Selector",
-        Text = "Failed to load Rayfield UI. Check internet or URL.",
-        Duration = 6
-    })
-    return
-end
-
--- Build UI
+-- load Rayfield
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 local Window = Rayfield:CreateWindow({
-    Name = "Dev Move Selector",
-    LoadingTitle = "Dev Tools",
-    LoadingSubtitle = "Select a move and press Q to use it",
+    Name = "Developer Move Selector",
+    LoadingTitle = "Testing GUI",
+    LoadingSubtitle = "Studio-only tool",
     ConfigurationSaving = { Enabled = false }
 })
-
 local Tab = Window:CreateTab("Moves")
-local currentIndex = 1
 
--- build options list for dropdown
 local options = {}
-for i,entry in ipairs(moves) do
-    options[i] = entry.Name
+for _, entry in ipairs(moves) do
+    table.insert(options, entry.Name)
 end
 
+local selectedIndex = 1
 Tab:CreateDropdown({
     Name = "Select Move",
     Options = options,
     CurrentOption = options[1],
     Flag = "SelectedMove",
     Callback = function(opt)
-        -- find index
-        for i,v in ipairs(options) do
-            if v == opt then currentIndex = i; break end
+        for i, v in ipairs(options) do
+            if v == opt then selectedIndex = i; break end
         end
     end
 })
 
-Tab:CreateLabel({Title = "Hotkey", Content = "Press Q to trigger the selected move (dev only)."})
-Tab:CreateButton({
-    Name = "Trigger Selected Move Now",
-    Callback = function()
-        local entry = moves[currentIndex]
-        if entry then
-            TriggerMove(entry)
-        end
-    end
-})
-
--- helper that sends the move to server
 local function TriggerMove(entry)
-    local remotePath = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("OnAbility")
-    if not remotePath then
-        Rayfield:Notify({ Title = "Error", Content = "Remotes.OnAbility not found in ReplicatedStorage", Duration = 4 })
+    local remote = ReplicatedStorage:WaitForChild("Remotes"):FindFirstChild("OnAbility")
+    if not remote then
+        Rayfield:Notify({ Title = "Error", Content = "Missing remote 'OnAbility'", Duration = 4 })
         return
     end
-
-    local payload = entry.Data
-    -- If the server expects a different wrapper shape, adjust here.
-    -- Best-effort: send the move table as the single argument.
-    local suc, err = pcall(function()
-        if remotePath:IsA("RemoteFunction") then
-            remotePath:InvokeServer(payload)
+    local success, err = pcall(function()
+        if remote:IsA("RemoteFunction") then
+            remote:InvokeServer(entry.Data)
         else
-            remotePath:FireServer(payload)
+            remote:FireServer(entry.Data)
         end
     end)
-    if suc then
-        Rayfield:Notify({ Title = "Sent", Content = "Triggered move: "..tostring(entry.Name), Duration = 3 })
+    if success then
+        Rayfield:Notify({ Title = "Triggered", Content = "Move: " .. entry.Name, Duration = 3 })
     else
-        Rayfield:Notify({ Title = "Error", Content = "Failed to send: "..tostring(err), Duration = 4 })
+        Rayfield:Notify({ Title = "Error", Content = tostring(err), Duration = 4 })
     end
 end
 
--- bind Q hotkey
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
+Tab:CreateButton({
+    Name = "Trigger Selected Move",
+    Callback = function()
+        TriggerMove(moves[selectedIndex])
+    end
+})
+
+UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
     if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.Q then
-        local entry = moves[currentIndex]
-        if entry then
-            TriggerMove(entry)
-        end
+        TriggerMove(moves[selectedIndex])
     end
 end)
 
--- convenience notify
-Rayfield:Notify({ Title = "Dev Move Selector", Content = "Ready — select a move and press Q", Duration = 4 })
+Rayfield:Notify({
+    Title = "Ready",
+    Content = "Select a move and press Q to activate it (Studio only).",
+    Duration = 5
+})
