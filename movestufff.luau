@@ -338,11 +338,14 @@ local function TriggerMove(entry)
         return
     end
 
+    local chosenMove = entry.Data
+    local sendArgs = { chosenMove, 0, args[3] }
+
     local success, err = pcall(function()
         if remote:IsA("RemoteFunction") then
-            remote:InvokeServer(entry.Data)
+            remote:InvokeServer(unpack(sendArgs))
         else
-            remote:FireServer(entry.Data)
+            remote:FireServer(unpack(sendArgs))
         end
     end)
 
@@ -360,6 +363,7 @@ local function TriggerMove(entry)
         })
     end
 end
+
 
 -- Manual button
 Tab:CreateButton({
