@@ -1,0 +1,91 @@
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Clone UI button
+local clone = script.Ability:Clone()
+clone.Name = "Punch_Ability"
+clone.Text = "PUNCH"
+clone.Parent = script.Parent:WaitForChild("List")
+
+-- Character reference
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+LocalPlayer.CharacterAdded:Connect(function(char)
+    Character = char
+end)
+
+-- Variables
+local swinging = false
+local mouse = LocalPlayer:GetMouse()
+local CurrentCamera = Workspace.CurrentCamera
+
+-- Convert screen position to world position
+local function getWorldPositionFromScreen(pos)
+    local ray = CurrentCamera:ScreenPointToRay(pos.X, pos.Y)
+    local params = RaycastParams.new()
+    params.FilterDescendantsInstances = {Character}
+    params.FilterType = Enum.RaycastFilterType.Exclude
+    local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
+    return result and result.Position or (ray.Origin + ray.Direction * 1000)
+end
+
+-- Perform swing ability
+local function performSwing()
+    swinging = true
+    local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+    local Hitbox = Character:FindFirstChild("Hitbox")
+
+    -- Just send hitbox event (no character/killer checks)
+    Character:SetAttribute("Swinging", true)
+    ReplicatedStorage.HitboxProperties:FireServer(
+        Hitbox,
+        false,
+        Color3.fromRGB(0, 0, 0),
+        true,
+        Vector3.new(6.5, 3.45499, 6.5)
+    )
+
+    -- Play swing sound
+    ReplicatedStorage.PlaySound:FireServer(
+        HumanoidRootPart,
+        "rbxassetid://70522491864931",
+        "Swing",
+        1,
+        1,
+        false
+    )
+
+    swinging = false
+end
+
+-- Button click
+clone.MouseButton1Down:Connect(performSwing)
+
+-- Input handling
+local abilityCooldown = false
+
+UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        performSwing()
+    elseif input.KeyCode == Enum.KeyCode.Q and not abilityCooldown then
+        abilityCooldown = true
+        Character:FindFirstChild("Humanoid").WalkSpeed = 0
+
+        local pos = getWorldPositionFromScreen(UserInputService:GetMouseLocation())
+        ReplicatedStorage.Abilities.c00lkidd.CorruptNature.Event:FireServer(pos)
+
+        -- Restore walk speed
+        task.delay(1, function()
+            Character:FindFirstChild("Humanoid").WalkSpeed = 16
+        end)
+
+        -- Reset cooldown
+        task.delay(0, function()
+            abilityCooldown = false
+        end)
+    end
+end)
