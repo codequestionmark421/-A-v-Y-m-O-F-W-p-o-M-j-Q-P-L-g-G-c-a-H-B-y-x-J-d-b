@@ -14,8 +14,7 @@ local ADMIN_USERIDS = {
 }
 
 local function isAllowed()
-    if RunService:IsStudio() then return true end
-    return ADMIN_USERIDS[localPlayer.UserId] == true
+	return true;
 end
 
 if not isAllowed() then
