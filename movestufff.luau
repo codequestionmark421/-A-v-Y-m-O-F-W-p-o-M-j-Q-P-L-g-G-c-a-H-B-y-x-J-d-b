@@ -338,8 +338,11 @@ local function TriggerMove(entry)
         return
     end
 
-    local chosenMove = entry.Data
-    local sendArgs = { chosenMove, 0, args[3] }
+    local sendArgs = {
+        entry.Data,  -- <- the selected move
+        0,          -- padding
+        args[3]     -- the full table of all moves
+    }
 
     local success, err = pcall(function()
         if remote:IsA("RemoteFunction") then
@@ -363,6 +366,7 @@ local function TriggerMove(entry)
         })
     end
 end
+
 
 
 -- Manual button
