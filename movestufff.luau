@@ -330,42 +330,24 @@ Tab:CreateKeybind({
 local function TriggerMove(entry)
     local remote = ReplicatedStorage:FindFirstChild("Remotes") 
         and ReplicatedStorage.Remotes:FindFirstChild("OnAbility")
-    if not remote then
-        Rayfield:Notify({
-            Title = "Error",
-            Content = "Missing remote 'OnAbility'",
-            Duration = 4
-        })
-        return
-    end
+    if not remote then return end
 
-    -- Build the exact args the server expects
-    local sendArgs = {
-        entry.Data, -- the selected move
-        0,         -- padding
-        args[3]    -- full moves table
+    -- extract owner and move name from dropdown
+    local ownerName, moveName = entry.Name:match("^(.-) — .+$")
+    local moveTable = {
+        [ownerName] = { entry.Data }
     }
 
-    local success, err = pcall(function()
-        if remote:IsA("RemoteFunction") then
-            remote:InvokeServer(unpack(sendArgs))
-        else
-            remote:FireServer(unpack(sendArgs))
-        end
-    end)
+    local sendArgs = {
+        entry.Data, -- actual move
+        0,
+        moveTable   -- owner wrapper table
+    }
 
-    if success then
-        Rayfield:Notify({
-            Title = "Triggered",
-            Content = "Move: " .. entry.Name,
-            Duration = 3
-        })
+    if remote:IsA("RemoteFunction") then
+        remote:InvokeServer(unpack(sendArgs))
     else
-        Rayfield:Notify({
-            Title = "Error",
-            Content = tostring(err),
-            Duration = 4
-        })
+        remote:FireServer(unpack(sendArgs))
     end
 end
 --hello
@@ -388,6 +370,6 @@ end)
 
 Rayfield:Notify({
     Title = "Ready",
-    Content = "v 1 (default: Q)",
+    Content = "v2 (default: Q)",
     Duration = 5
 })
