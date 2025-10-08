@@ -328,7 +328,8 @@ Tab:CreateKeybind({
 
 -- Function to trigger the move
 local function TriggerMove(entry)
-    local remote = ReplicatedStorage:FindFirstChild("Remotes") and ReplicatedStorage.Remotes:FindFirstChild("OnAbility")
+    local remote = ReplicatedStorage:FindFirstChild("Remotes") 
+        and ReplicatedStorage.Remotes:FindFirstChild("OnAbility")
     if not remote then
         Rayfield:Notify({
             Title = "Error",
@@ -338,10 +339,11 @@ local function TriggerMove(entry)
         return
     end
 
+    -- Build the exact args the server expects
     local sendArgs = {
-        entry.Data,  -- <- the selected move
-        0,          -- padding
-        args[3]     -- the full table of all moves
+        entry.Data, -- the selected move
+        0,         -- padding
+        args[3]    -- full moves table
     }
 
     local success, err = pcall(function()
@@ -366,8 +368,7 @@ local function TriggerMove(entry)
         })
     end
 end
-
-
+--hello
 
 -- Manual button
 Tab:CreateButton({
@@ -387,6 +388,6 @@ end)
 
 Rayfield:Notify({
     Title = "Ready",
-    Content = "Select a move and press your keybind (default: Q)",
+    Content = "v 1 (default: Q)",
     Duration = 5
 })
