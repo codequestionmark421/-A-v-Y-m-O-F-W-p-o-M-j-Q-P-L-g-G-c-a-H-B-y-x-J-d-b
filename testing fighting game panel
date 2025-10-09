@@ -14,7 +14,7 @@ function module:Execute(loop)
 			local b = math.random(0, 255) / 255
 
 			local args = {
-				game:GetService("Players").LocalPlayer.Character:WaitForChild("Right Arm"),
+				obj,
 				Color3.new(r, g, b)
 			}
 			game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("SetPartColor"):FireServer(unpack(args))
