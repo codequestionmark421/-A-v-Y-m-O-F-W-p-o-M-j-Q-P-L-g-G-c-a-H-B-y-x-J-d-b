@@ -35,11 +35,13 @@ function module:Execute(loop)
 	loop = loop
 end
 
-while true do
-	wait()
-	if not loop then continue end
-	require(script.Parent.farm):Execute()
-end
+task.spawn(function()
+	while true do
+		wait()
+		if not loop then continue end
+		require(script.Parent.farm):Execute()
+	end
+end)
 return module
 
 end)()
