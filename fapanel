@@ -1,0 +1,69 @@
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua"))()
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HitboxProperties = ReplicatedStorage:WaitForChild("HitboxProperties")
+
+local Window = Rayfield:CreateWindow({
+    Name = "script",
+    LoadingTitle = "Initializing...",
+    LoadingSubtitle = "Please wait",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil,
+        FileName = "fts"
+    }
+})
+
+local MainTab = Window:CreateTab("Main", 4483362458)
+local Section = MainTab:CreateSection("Player Selection")
+
+local TextBox = Section:CreateTextBox({
+    Name = "Player Username",
+    PlaceholderText = "Enter player's username or display name",
+    TextDisappear = false, -- Ensure text remains visible while typing
+    Callback = function(text)
+        local player
+        for _, p in pairs(Players:GetPlayers()) do
+            if p.Name:lower() == text:lower() or p.DisplayName:lower() == text:lower() then
+                player = p
+                break
+            end
+        end
+
+        if player then
+            local char = player.Character
+            if char then
+                local torso = char:FindFirstChild("UpperTorso") or char:FindFirstChild("LowerTorso") or char:FindFirstChild("Torso")
+                if torso then
+                    local args = {
+                        torso,
+                        false,
+                        torso.Color,
+                        true,
+                        Vector3.new(4, 4, 4)
+                    }
+                    HitboxProperties:FireServer(unpack(args))
+                else
+                    Rayfield:Notify({
+                        Title = "Error",
+                        Content = "Player's torso not found.",
+                        Duration = 3.5,
+                        Image = 4483362458,
+                        Actions = {}
+                    })
+                end
+            end
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Player not found.",
+                Duration = 3.5,
+                Image = 4483362458,
+                Actions = {}
+            })
+        end
+    end
+})
+
+Rayfield:LoadConfiguration()
