@@ -6,7 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HitboxProperties = ReplicatedStorage:WaitForChild("HitboxProperties")
 
 local Window = Rayfield:CreateWindow({
-    Name = "Player Fat Maker",
+    Name = "script",
     LoadingTitle = "Initializing...",
     LoadingSubtitle = "Please wait",
     ConfigurationSaving = {
